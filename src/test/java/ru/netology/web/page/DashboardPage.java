@@ -2,22 +2,20 @@ package ru.netology.web.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import lombok.Data;
-import lombok.Value;
+import ru.netology.web.data.DataHelper;
 
-import java.util.Objects;
-
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
 public class DashboardPage {
+    private final SelenideElement heading = $("[data-test-id='dashboard']");
     private ElementsCollection cards = $$(".list__item div");
     private final String balanceStart = "баланс: ";
     private final String balanceFinish = " р.";
 
     public DashboardPage() {
+        heading.should(visible);
     }
 
     public int getCardBalance(String id) {
@@ -36,4 +34,10 @@ public class DashboardPage {
         String value = text.substring(start + balanceStart.length(), finish);
         return Integer.parseInt(value);
     }
+
+    public MoneyTransfer selectCardToTransfer(DataHelper.CardInfo cardInfo) {
+        cards.findBy(attribute("data-test-id", cardInfo.getCardId())).$("button").click();
+        return new MoneyTransfer();
+    }
+
 }
